@@ -1,9 +1,10 @@
 'use client';
-import { METHODS } from 'http';
 import React, { useState } from 'react';
 
 async function getUser() {
-  const res = await fetch('http://localhost:3000/api/user');
+  const res = await fetch('http://localhost:3000/api/user', {
+    cache: 'no-store',
+  });
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
@@ -15,54 +16,8 @@ async function getUser() {
   return res.json();
 }
 
-async function createUser(userData) {
-  try {
-    const res = await fetch('http://localhost:3000/api/user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to create user');
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
-}
-
 export default async function Page() {
   const data = await getUser();
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    password: '',
-    address: '',
-  });
-
-  function handleInputChange(e) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    try {
-      await createUserData(formData);
-      // Optionally, you can handle success, e.g., show a success message
-      console.log('User created successfully');
-    } catch (error) {
-      // Handle error, e.g., show an error message
-      console.error('Error creating user:', error);
-    }
-  }
 
   return (
     <>
@@ -105,38 +60,6 @@ export default async function Page() {
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="mt-9">
-        <form>
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleInputChange}
-            placeholder="Full Name"
-          />
-          <input
-            type="text"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Email"
-          />
-          <input
-            type="password"
-            name="password"
-            onChange={handleInputChange}
-            placeholder="Password"
-          />
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            placeholder="Address"
-          />
-          <button type="submit">Create</button>
-        </form>
       </div>
     </>
   );
